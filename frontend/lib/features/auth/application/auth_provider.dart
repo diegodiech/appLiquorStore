@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/usuario.dart';
 import '../data/auth_repository.dart';
-import '../data/auth_repository_mock.dart';
+import '../data/auth_repository_http.dart';
 import 'auth_state.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepositoryMock();
+  return AuthRepositoryHttp(ref);
 });
 
 /// Usuarios registrados, usados por el Historial de ventas para mostrar
@@ -24,11 +24,21 @@ class AuthController extends Notifier<AuthState> {
 
   Future<void> login({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final usuario = await ref
-        .read(authRepositoryProvider)
-        .login(email: email, password: password);
 
-    if (usuario == null) {
+    final AuthResult? resultado;
+    try {
+      resultado = await ref
+          .read(authRepositoryProvider)
+          .login(email: email, password: password);
+    } catch (error) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'No se pudo conectar con el servidor: $error',
+      );
+      return;
+    }
+
+    if (resultado == null) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'Correo o contraseña incorrectos',
@@ -36,7 +46,7 @@ class AuthController extends Notifier<AuthState> {
       return;
     }
 
-    state = AuthState(currentUser: usuario);
+    state = AuthState(currentUser: resultado.usuario, token: resultado.token);
   }
 
   void logout() {

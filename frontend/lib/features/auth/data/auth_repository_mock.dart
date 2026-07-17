@@ -24,7 +24,7 @@ class AuthRepositoryMock implements AuthRepository {
   ];
 
   @override
-  Future<Usuario?> login({
+  Future<AuthResult?> login({
     required String email,
     required String password,
   }) async {
@@ -32,7 +32,7 @@ class AuthRepositoryMock implements AuthRepository {
     for (final usuario in _usuarios) {
       if (usuario.email.toLowerCase() == email.toLowerCase() &&
           usuario.password == password) {
-        return usuario;
+        return AuthResult(usuario: usuario, token: null);
       }
     }
     return null;

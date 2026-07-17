@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/producto.dart';
 import '../data/product_repository.dart';
-import '../data/product_repository_mock.dart';
+import '../data/product_repository_http.dart';
 
 final productRepositoryProvider = Provider<ProductRepository>((ref) {
-  return ProductRepositoryMock();
+  return ProductRepositoryHttp(ref);
 });
 
 final productListProvider =

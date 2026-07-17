@@ -84,10 +84,20 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     );
 
     final controller = ref.read(productListProvider.notifier);
-    if (_isEditing) {
-      await controller.updateProduct(producto);
-    } else {
-      await controller.addProduct(producto);
+    try {
+      if (_isEditing) {
+        await controller.updateProduct(producto);
+      } else {
+        await controller.addProduct(producto);
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No se pudo guardar el producto: $error')),
+        );
+      }
+      return;
     }
 
     if (mounted) Navigator.of(context).pop();

@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/proveedor.dart';
 import '../data/supplier_repository.dart';
-import '../data/supplier_repository_mock.dart';
+import '../data/supplier_repository_http.dart';
 
 final supplierRepositoryProvider = Provider<SupplierRepository>((ref) {
-  return SupplierRepositoryMock();
+  return SupplierRepositoryHttp(ref);
 });
 
 final supplierListProvider =

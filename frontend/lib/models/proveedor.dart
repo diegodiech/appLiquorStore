@@ -19,4 +19,19 @@ class Proveedor {
       telefono: telefono ?? this.telefono,
     );
   }
+
+  factory Proveedor.fromJson(Map<String, dynamic> json) {
+    return Proveedor(
+      idProveedor: json['id'].toString(),
+      nombreEmpresa: json['nombre_empresa'] as String,
+      telefono: json['telefono'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nombre_empresa': nombreEmpresa,
+      'telefono': telefono,
+    };
+  }
 }
