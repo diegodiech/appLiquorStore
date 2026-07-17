@@ -34,6 +34,10 @@ CREATE TABLE productos (
     stock_minimo INT NOT NULL DEFAULT 5,
     categoria_id INT,
     proveedor_id INT,
+    -- Borrado lógico: "eliminar" un producto lo marca inactivo en vez de
+    -- borrar la fila, porque detalle_ventas.producto_id no permite borrar
+    -- productos con ventas asociadas (evita romper el historial de ventas).
+    activo TINYINT(1) NOT NULL DEFAULT 1,
     FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE SET NULL,
     FOREIGN KEY (proveedor_id) REFERENCES proveedores(id) ON DELETE SET NULL
 );
