@@ -1,5 +1,6 @@
 const productoRepository = require('../repositories/producto.repository');
 const ApiError = require('../utils/ApiError');
+const { rethrowAsConflict } = require('../utils/mysqlErrors');
 
 const validarProducto = ({ nombre, precio_compra, precio_venta }) => {
   if (!nombre || precio_compra === undefined || precio_venta === undefined) {
@@ -14,7 +15,11 @@ const getAll = (search) => productoRepository.findAllActivos(search);
 
 const create = async (data) => {
   validarProducto(data);
-  return productoRepository.create(data);
+  try {
+    return await productoRepository.create(data);
+  } catch (error) {
+    rethrowAsConflict(error, 'Ya existe un producto con ese código de barra.');
+  }
 };
 
 const update = async (id, data) => {
@@ -23,7 +28,11 @@ const update = async (id, data) => {
   if (!existente) {
     throw new ApiError(404, 'Producto no encontrado.');
   }
-  return productoRepository.update(id, data);
+  try {
+    return await productoRepository.update(id, data);
+  } catch (error) {
+    rethrowAsConflict(error, 'Ya existe un producto con ese código de barra.');
+  }
 };
 
 const softDelete = async (id) => {
